@@ -1,0 +1,12 @@
+    <odoo>
+
+   <record id="action_reservation" model="ir.actions.act_window">
+        <field name="name">Reservations</field>
+        <field name="res_model">reservation.reservation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+        
+    </odoo>
+    
+ 
