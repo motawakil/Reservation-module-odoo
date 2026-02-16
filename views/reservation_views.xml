@@ -1,4 +1,10 @@
 <odoo>
+    
+        <!-- ========================================= -->
+    <!-- RESERVATION MAIN LIST VIEW               -->
+    <!-- ========================================= -->
+    
+    
     <record id="view_reservation_list" model="ir.ui.view">
         <field name="name">reservation.reservation.list</field>
         <field name="model">reservation.reservation</field>
@@ -12,6 +18,10 @@
             </list>
         </field>
     </record>
+
+    <!-- ========================================= -->
+    <!-- RESERVATION FORM VIEW                    -->
+    <!-- ========================================= -->
 
     <record id="view_reservation_form" model="ir.ui.view">
         <field name="name">reservation.reservation.form</field>
@@ -58,4 +68,11 @@
             </form>
         </field>
     </record>
+
+
+
+
+
+
+
 </odoo>
