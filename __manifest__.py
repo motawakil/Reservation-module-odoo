@@ -10,7 +10,8 @@
 "installable": True,
 "data": [
     "security/ir.model.access.csv",
-    "data/reservation_actions.xml",
+    "data/reservation_actions.xml" ,
+    "data/sequence_reservation.xml",
     "views/reservation_views.xml",
     "views/reservation_menus.xml",
 ]
