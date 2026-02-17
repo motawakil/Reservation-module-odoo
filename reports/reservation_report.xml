@@ -1,0 +1,12 @@
+<odoo>
+    <record id="action_report_reservation" model="ir.actions.report">
+        <field name="name">Fiche de Réservation</field>
+        <field name="model">reservation.reservation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">reservation.report_reservation_document</field>
+        <field name="report_file">reservation.report_reservation_document</field>
+        <field name="print_report_name">'Reservation - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_reservation_reservation"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
