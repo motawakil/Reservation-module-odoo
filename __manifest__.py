@@ -13,9 +13,11 @@
     'security/ir.model.access.csv',
     "data/reservation_actions.xml" ,
     "data/sequence_reservation.xml",
-    "repport/reservation_report_templates.xml",
-    "repport/reservation_report.xml",
+    "reports/reservation_report.xml",
+    "reports/repport_template.xml",
+    "wizards/reservation_report_wizard_view.xml",
     "views/reservation_views.xml",
+
     "views/reservation_menus.xml",
 ]
 

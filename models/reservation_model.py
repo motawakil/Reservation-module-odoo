@@ -13,7 +13,9 @@ class Reservation(models.Model):
     # tracking=True enables the audit log in the chatter
     name = fields.Char(string='Reference', required=True, readonly=True, tracking=True, default='New', copy =False)
     partner_id = fields.Many2one('res.partner', string='Customer', required=True, tracking=True)
-    reservation_date = fields.Datetime(string='Reservation Date', required=True, default=fields.Datetime.now)
+    reservation_date = fields.Date(string='Reservation Date', required=True, default=fields.Date.today, tracking=True)
+    reservation_start_date = fields.Date(string='Start Date', required=True, default=fields.Date.today, tracking=True)
+    reservation_end_date = fields.Date(string='End Date', required=True)
     
     state = fields.Selection([
         ('draft', 'Draft'), 
@@ -23,8 +25,14 @@ class Reservation(models.Model):
 
     line_ids = fields.One2many('reservation.line', 'reservation_id', string='Reservation Lines')
     sale_order_id = fields.Many2one('sale.order', string='Related Sale Order')
-    amount_total = fields.Float(string='Total Amount', compute='_compute_amount_total', store=True)
-    
+
+
+    # those fields are used to get the currency of the company and use it in the reservation lines and the total amount, so when we print the reservation report we can display the price with the correct currency
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
+    currency_id = fields.Many2one('res.currency', related='company_id.currency_id', string='Currency')
+
+    # Update your total amount to use the currency
+    amount_total = fields.Monetary(string='Total Amount', compute='_compute_amount_total', store=True, currency_field='currency_id')
 
 
 
