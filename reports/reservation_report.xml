@@ -10,18 +10,7 @@
         <field name="binding_type">report</field>
     </record>
 
-<record id="action_report_reservation_xlsx" model="ir.actions.report">
-        <field name="name">Rapport Excel des Réservations</field>
-        <field name="model">reservation.reservation</field>
-        <field name="report_type">xlsx</field> <field name="report_name">reservation.reservation_report_xlsx</field>
-        <field name="report_file">Rapport_Reservation</field>
-        
-        <field name="binding_model_id" ref="model_reservation_reservation"/>
-        <field name="binding_type">report</field>
-        
-        <field name="binding_view_types">list</field>
-    </record>
 
-
+    
 
 </odoo>

@@ -1,26 +1,39 @@
 <odoo>
-    <record id="action_reservation" model="ir.actions.act_window">
-        <field name="name">Reservations</field>
-        <field name="res_model">reservation.reservation</field>
-        <field name="view_mode">list,form</field> <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">Create your first reservation!</p>
-        </field>
-    </record>
 
-    <menuitem id="menu_reservation_root" 
-              name="Reservation" 
+    <!-- ======================== -->
+    <!-- ROOT MENU                -->
+    <!-- ======================== -->
+    <menuitem id="menu_reservation_root"
+              name="Reservation"
               web_icon="base,static/description/icon.png"
               sequence="10"/>
 
-
-    <menuitem id="menu_reservation_category" 
-              name="Management" 
-              parent="menu_reservation_root" 
+    <!-- ======================== -->
+    <!-- MANAGEMENT               -->
+    <!-- ======================== -->
+    <menuitem id="menu_reservation_category"
+              name="Management"
+              parent="menu_reservation_root"
               sequence="10"/>
 
-    <menuitem id="menu_reservation_list" 
-              name="Reservations" 
-              parent="menu_reservation_category" 
-              action="action_reservation" 
+    <menuitem id="menu_reservation_list"
+              name="Reservations"
+              parent="menu_reservation_category"
+              action="action_reservation"
               sequence="10"/>
+
+    <!-- ======================== -->
+    <!-- ANALYSE / REPORTING      -->
+    <!-- ======================== -->
+    <menuitem id="menu_reservation_reporting"
+              name="Analyse"
+              parent="menu_reservation_root"
+              sequence="20"/>
+
+    <menuitem id="menu_reservation_report_sub"
+              name="Tableau de bord"
+              parent="menu_reservation_reporting"
+              action="action_reservation_report_all"
+              sequence="10"/>
+
 </odoo>

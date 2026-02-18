@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_reservation_reservation,reservation.reservation,model_reservation_reservation,reservation_group_users,1,1,1,1
 access_reservation_line,reservation.line,model_reservation_line,reservation_group_users,1,1,1,1
 access_reservation_excel_wizard,reservation.excel.wizard,model_reservation_excel_wizard,reservation_group_users,1,1,1,1
+access_reservation_report,reservation.report,model_reservation_report,reservation_group_users,1,0,0,0

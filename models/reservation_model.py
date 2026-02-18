@@ -3,9 +3,7 @@ from odoo.exceptions import ValidationError
 
 
 class Reservation(models.Model):
-
-    # Fields Defintion 
-
+    
     _name = 'reservation.reservation'
     _description = 'Reservation'
     _inherit = ['mail.thread', 'mail.activity.mixin']
@@ -29,7 +27,7 @@ class Reservation(models.Model):
 
     # those fields are used to get the currency of the company and use it in the reservation lines and the total amount, so when we print the reservation report we can display the price with the correct currency
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
-    currency_id = fields.Many2one('res.currency', related='company_id.currency_id', string='Currency')
+    currency_id = fields.Many2one('res.currency', related='company_id.currency_id', string='Currency', store = True)
 
     # Update your total amount to use the currency
     amount_total = fields.Monetary(string='Total Amount', compute='_compute_amount_total', store=True, currency_field='currency_id')
@@ -115,10 +113,8 @@ class Reservation(models.Model):
                     'name': line.product_id.display_name, # Standard SO lines need a description
                 }) for line in self.line_ids],
             })
-            self.sale_order_id = sale_order.id
+            self.sale_order_id = sale_order.id #   liaison de la reservation avec le sale order newly created par le champ sale_order_id de la reservation
             return sale_order
-
-
 
 
 
@@ -131,6 +127,13 @@ class Reservation(models.Model):
     def _compute_amount_total(self):
         for rec in self:
             rec.amount_total = sum(rec.line_ids.mapped('subtotal'))
+
+
+    @api.constrains('reservation_start_date', 'reservation_end_date')
+    def _check_dates(self):
+        for record in self:
+            if record.reservation_start_date > record.reservation_end_date:
+                raise ValidationError("La date de fin ne peut pas être antérieure à la date de début.")
 
    # Override the create method to assign a sequence number to the name field when a new reservation is created.
     @api.model_create_multi

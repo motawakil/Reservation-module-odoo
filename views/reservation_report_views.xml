@@ -1,0 +1,48 @@
+<odoo>
+
+    <!-- LIST VIEW (required since action declares list mode) -->
+    <record id="view_reservation_report_list" model="ir.ui.view">
+        <field name="name">reservation.report.list</field>
+        <field name="model">reservation.report</field>
+        <field name="arch" type="xml">
+            <list string="Reservation Analysis" create="false" edit="false" delete="false">
+                <field name="partner_id"/>
+                <field name="state"/>
+                <field name="reservation_count" sum="Total Reservations"/>
+                <field name="line_count"         sum="Total Lines"/>
+                <field name="total_paid"         sum="Total Paid"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- PIVOT VIEW -->
+    <record id="view_reservation_report_pivot" model="ir.ui.view">
+        <field name="name">reservation.report.pivot</field>
+        <field name="model">reservation.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Reservation Analysis" sample="1">
+                <field name="partner_id"        type="row"/>
+                <field name="state"             type="col"/>
+                <field name="total_paid"        type="measure"/>
+                <field name="reservation_count" type="measure"/>
+                <field name="line_count"        type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- GRAPH VIEW -->
+    <record id="view_reservation_report_graph" model="ir.ui.view">
+        <field name="name">reservation.report.graph</field>
+        <field name="model">reservation.report</field>
+        <field name="arch" type="xml">
+            <graph string="Reservation Analysis" type="bar" sample="1">
+                <field name="partner_id"        type="row"/>
+                <field name="state"             type="col"/>
+                <field name="total_paid"        type="measure"/>
+                <field name="reservation_count" type="measure"/>
+                <field name="line_count"        type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+</odoo>
