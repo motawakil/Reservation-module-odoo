@@ -30,15 +30,15 @@ class ReservationAPI(http.Controller):
         Create a new reservation with lines.
 
         Expected JSON body:
-        {
-            "partner_id": 7,
-            "reservation_start_date": "2026-02-20",
-            "reservation_end_date": "2026-02-25",
-            "lines": [
-                {"product_id": 15, "quantity": 2},
-                {"product_id": 18, "quantity": 1}
-            ]
-        }
+            {
+                "partner_id": 7,
+                "reservation_start_date": "2026-02-20",
+                "reservation_end_date": "2026-02-25",
+                "lines": [
+                    {"product_id": 15, "quantity": 2},
+                    {"product_id": 18, "quantity": 1}
+                ]
+            }
         """
 
         try:
@@ -57,7 +57,8 @@ class ReservationAPI(http.Controller):
             # ----------------------------------------------------
             # 2️⃣ Get JSON data
             # ----------------------------------------------------
-            data = request.jsonrequest or {}
+            data = request.httprequest.get_json(silent=True) or {}
+
 
             required_fields = [
                 'partner_id',
@@ -148,10 +149,9 @@ class ReservationAPI(http.Controller):
         except Exception as e:
             return {
                 "success": False, 
-                "message": "Internal server error.", 
+                "message": str(e), 
                 "data": {}
             }
-
 
 
 
@@ -228,7 +228,7 @@ class ReservationAPI(http.Controller):
     @http.route(
         '/api/reservations',
         type='json',
-        auth='user',
+        auth='bearer',
         methods=['GET'],
         csrf=False,
         cors='*'
@@ -249,6 +249,7 @@ class ReservationAPI(http.Controller):
                     "id": r.id,
                     "name": r.name,
                     "partner_name": r.partner_id.display_name,
+                    "partner_id"  :  r.partner_id.id,
                     "state": r.state,
                     "start_date": r.reservation_start_date,
                     "end_date": r.reservation_end_date,
@@ -309,12 +310,14 @@ class ReservationAPI(http.Controller):
                 }
             }
 
-        except Exception:
-            return {"success": False, "message": "Internal server error.", "data": {}}
 
 
-
-
+        except Exception as e:
+            return {
+                "success": False, 
+                "message": str(e), 
+                "data": {}
+            }
 
 
 

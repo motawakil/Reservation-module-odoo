@@ -17,7 +17,7 @@
                         class="btn-primary"/>
             </header>
                 <field name="name" decoration-bf="1"/>
-                <field name="partner_id"/>
+                <field name="partner_id" readonly= "1"/>
                 <field name="reservation_date"/>
                 <field name="reservation_start_date"/>
                 <field name="reservation_end_date"/>
@@ -49,7 +49,7 @@
                     <group>
                         <group>
                             <field name="name"/>
-                            <field name="partner_id"/>
+                            <field name="partner_id" readonly= "1"/>
                         </group>
                         <group>
                             <field name="reservation_date"/>

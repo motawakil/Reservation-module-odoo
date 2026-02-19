@@ -21,7 +21,7 @@
         <field name="model">reservation.report</field>
         <field name="arch" type="xml">
             <pivot string="Reservation Analysis" sample="1">
-                <field name="partner_id"        type="row"/>
+                <field name="partner_id"        type="row" />
                 <field name="state"             type="col"/>
                 <field name="total_paid"        type="measure"/>
                 <field name="reservation_count" type="measure"/>

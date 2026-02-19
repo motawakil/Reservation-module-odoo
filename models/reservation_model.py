@@ -10,7 +10,7 @@ class Reservation(models.Model):
 
     # tracking=True enables the audit log in the chatter
     name = fields.Char(string='Reference', required=True, readonly=True, tracking=True, default='New', copy =False)
-    partner_id = fields.Many2one('res.partner', string='Customer', required=True, tracking=True)
+    partner_id = fields.Many2one('res.partner', string='Customer', required=True, tracking=True, default=lambda self: self.env.user.partner_id)
     reservation_date = fields.Date(string='Reservation Date', required=True, default=fields.Date.today, tracking=True)
     reservation_start_date = fields.Date(string='Start Date', required=True, default=fields.Date.today, tracking=True)
     reservation_end_date = fields.Date(string='End Date', required=True)
