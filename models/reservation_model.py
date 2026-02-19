@@ -6,7 +6,7 @@ class Reservation(models.Model):
     
     _name = 'reservation.reservation'
     _description = 'Reservation'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
 
     # tracking=True enables the audit log in the chatter
     name = fields.Char(string='Reference', required=True, readonly=True, tracking=True, default='New', copy =False)
@@ -92,7 +92,13 @@ class Reservation(models.Model):
 
 # ----------------------------------------------------------------------------------------------------------------------------
 
-
+    # ------------------------------------------------------------------
+    # Obligatoire pour portal.mixin : indique quelle action ouvre
+    # l'enregistrement dans le backend (utilisé par _get_share_url)
+    # ------------------------------------------------------------------
+    def _get_report_base_filename(self):
+        self.ensure_one()
+        return self.name.replace('/', '_')
 
 
 

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+    TEMPLATE 1 : Entrée "My Reservations" sur /my
+    ============================================================ -->
+    <template id="portal_my_home_reservation"
+              name="Portal: Reservations entry"
+              inherit_id="portal.portal_my_home"
+              priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">My Reservations</t>
+                <t t-set="url">/my/reservations</t>
+                <t t-set="placeholder_count">reservation_count</t>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ============================================================
+    TEMPLATE 2 : /my/reservations — liste
+    ✅ key explicite = module.id  → obligatoire quand website est installé
+    ============================================================ -->
+    <template id="portal_my_reservations"
+              key="reservation_management.portal_my_reservations"
+              name="My Reservations">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My Reservations</t>
+            </t>
+
+            <t t-if="not reservations">
+                <div class="alert alert-info mt-3">
+                    <i class="fa fa-info-circle me-2"/>
+                    You have no reservations yet.
+                </div>
+            </t>
+
+            <t t-if="reservations">
+                <div class="d-flex mb-3 gap-2 flex-wrap">
+                    <t t-foreach="searchbar_filters" t-as="fil">
+                        <a t-att-class="'btn btn-sm ' + ('btn-primary' if filterby == fil else 'btn-outline-secondary')"
+                           t-att-href="'/my/reservations?filterby=%s&amp;sortby=%s' % (fil, sortby)">
+                            <t t-out="searchbar_filters[fil]['label']"/>
+                        </a>
+                    </t>
+                </div>
+
+                <div class="card">
+                    <table class="table table-hover o_portal_my_doc_table mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Reference</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="reservations" t-as="r">
+                                <tr>
+                                    <td>
+                                        <a t-att-href="'/my/reservations/%d' % r.id"
+                                           class="fw-bold text-decoration-none">
+                                            <t t-out="r.name"/>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <t t-out="r.reservation_start_date"
+                                           t-options='{"widget": "date"}'/>
+                                    </td>
+                                    <td>
+                                        <t t-out="r.reservation_end_date"
+                                           t-options='{"widget": "date"}'/>
+                                    </td>
+                                    <td>
+                                        <span t-attf-class="badge rounded-pill #{
+                                            'text-bg-secondary' if r.state == 'draft'     else
+                                            'text-bg-success'   if r.state == 'confirmed' else
+                                            'text-bg-danger'}">
+                                            <t t-out="r.state.capitalize()"/>
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <t t-out="r.amount_total"
+                                           t-options='{"widget": "monetary", "display_currency": r.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div t-if="pager" class="o_portal_pager text-center mt-3">
+                    <t t-call="portal.pager"/>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- ============================================================
+    TEMPLATE 3 : /my/reservations/<id> — détail
+    ============================================================ -->
+    <template id="portal_reservation_detail"
+              key="reservation_management.portal_reservation_detail"
+              name="Reservation Detail">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/my/reservations">My Reservations</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            <t t-out="reservation.name"/>
+                        </li>
+                    </ol>
+                </nav>
+
+                <div class="card shadow-sm mb-4">
+
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fa fa-calendar-check-o me-2"/>
+                            <t t-out="reservation.name"/>
+                        </h5>
+                        <span t-attf-class="badge rounded-pill #{
+                            'text-bg-secondary' if reservation.state == 'draft'     else
+                            'text-bg-success'   if reservation.state == 'confirmed' else
+                            'text-bg-danger'}">
+                            <t t-out="reservation.state.capitalize()"/>
+                        </span>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <p class="mb-1 text-muted small">Customer</p>
+                                <p class="fw-semibold">
+                                    <t t-out="reservation.partner_id.name"/>
+                                </p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1 text-muted small">Start Date</p>
+                                <p class="fw-semibold">
+                                    <t t-out="reservation.reservation_start_date"
+                                       t-options='{"widget": "date"}'/>
+                                </p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1 text-muted small">End Date</p>
+                                <p class="fw-semibold">
+                                    <t t-out="reservation.reservation_end_date"
+                                       t-options='{"widget": "date"}'/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr/>
+
+                        <h6 class="mb-3">Reservation Lines</h6>
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="text-end">Qty</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="reservation.line_ids" t-as="line">
+                                    <tr>
+                                        <td><t t-out="line.product_id.name"/></td>
+                                        <td class="text-end">
+                                            <t t-out="line.quantity"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-out="line.price_unit"
+                                               t-options='{"widget": "monetary", "display_currency": reservation.currency_id}'/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-out="line.subtotal"
+                                               t-options='{"widget": "monetary", "display_currency": reservation.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-light fw-bold">
+                                    <td colspan="3" class="text-end">Total</td>
+                                    <td class="text-end">
+                                        <t t-out="reservation.amount_total"
+                                           t-options='{"widget": "monetary", "display_currency": reservation.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <t t-if="reservation.sale_order_id">
+                            <hr/>
+                            <h6 class="mb-2">Related Quotation</h6>
+                            <a t-att-href="'/my/orders/%d' % reservation.sale_order_id.id"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="fa fa-file-text-o me-1"/>
+                                <t t-out="reservation.sale_order_id.name"/>
+                            </a>
+                        </t>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-end">
+                        <a t-att-href="'/my/reservations/%d/pdf' % reservation.id"
+                           class="btn btn-primary">
+                            <i class="fa fa-download me-1"/> Download PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>
