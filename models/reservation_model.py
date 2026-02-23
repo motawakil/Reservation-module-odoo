@@ -23,12 +23,9 @@ class Reservation(models.Model):
 
     line_ids = fields.One2many('reservation.line', 'reservation_id', string='Reservation Lines')
     sale_order_id = fields.Many2one('sale.order', string='Related Sale Order')
-
-
     # those fields are used to get the currency of the company and use it in the reservation lines and the total amount, so when we print the reservation report we can display the price with the correct currency
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id', string='Currency', store = True)
-
     # Update your total amount to use the currency
     amount_total = fields.Monetary(string='Total Amount', compute='_compute_amount_total', store=True, currency_field='currency_id')
 
@@ -40,21 +37,36 @@ class Reservation(models.Model):
     # Action Methods for (confirm, cancel, view sale order)
 
     def action_confirm(self):
-            for record in self: 
-                # checks for at least one line of a reservation exist before confiramtion !!
-                if not record.line_ids:
-                    raise ValidationError('You cannot confirm a reservation without any lines.')
-                
-                # Create sales record (SO) if it doesn't exist
-                if not record.sale_order_id:
-                    record._create_new_sale_order()
-                
+        for record in self:
+            # Check for at least one reservation line before confirmation
+            if not record.line_ids:
+                raise ValidationError('You cannot confirm a reservation without any lines.')
+
+            if not record.sale_order_id:
+                # No SO exists yet → create it from scratch
+                record._create_new_sale_order()
+            else:
                 so = record.sale_order_id
-                if so:
-                    # If it was cancelled, move it back to Draft
-                    if so.state == 'cancel':
-                        so.action_draft() # method de sale.order to reset to draft
-            return self.write({'state': 'confirmed'})
+
+                # If SO was cancelled, reset it to draft first
+                if so.state == 'cancel':
+                    so.action_draft()
+
+                # ✅ Delete existing lines and recreate them from reservation lines
+                so.order_line.unlink()
+                so.write({
+                    'order_line': [Command.create({
+                        'product_id': line.product_id.id,
+                        'product_uom_qty': line.quantity,
+                        'price_unit': line.price_unit,
+                        'name': line.product_id.display_name,
+                    }) for line in record.line_ids],
+                })
+
+        return self.write({'state': 'confirmed'})
+
+
+
 
     def action_cancel(self): # cancel action
             for record in self:
@@ -107,22 +119,26 @@ class Reservation(models.Model):
 
 
     def _create_new_sale_order(self):
-            # Private helper to generate the Sale Order 
-            self.ensure_one()
-            sale_order = self.env['sale.order'].create({
-                'partner_id': self.partner_id.id,
-                'origin': self.name,  # Good practice to track origin
-                'order_line': [Command.create({ # command to create one2many lines in the same transaction as the sale order creation  
-                    'product_id': line.product_id.id,
-                    'product_uom_qty': line.quantity,
-                    'price_unit': line.price_unit,
-                    'name': line.product_id.display_name, # Standard SO lines need a description
-                }) for line in self.line_ids],
-            })
-            self.sale_order_id = sale_order.id #   liaison de la reservation avec le sale order newly created par le champ sale_order_id de la reservation
-            return sale_order
+        self.ensure_one()
+        sale_order = self.env['sale.order'].create({
+            'partner_id': self.partner_id.id,
+            'origin': self.name,
+            'order_line': [Command.create({
+                'product_id': line.product_id.id,
+                'product_uom_qty': line.quantity,
+                'price_unit': line.price_unit,
+                'name': line.product_id.display_name,
+            }) for line in self.line_ids],
+        })
+        self.sale_order_id = sale_order.id
+        return sale_order
+    
 
+    def write(self, vals):
+        if 'line_ids' in vals.keys() and self.state != 'draft':
+            self.state = 'draft'
 
+        return super().write(vals)
 
 
 # ----------------------------------------------------------------------------------------------------------------------------

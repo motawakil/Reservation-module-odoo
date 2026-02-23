@@ -9,7 +9,7 @@
         <field name="name">reservation.reservation.list</field>
         <field name="model">reservation.reservation</field>
         <field name="arch" type="xml">
-            <list string="Reservations" decoration-info="state == 'draft'" decoration-success="state == 'confirmed'">
+            <list string="Reservations" decoration-info="state == 'draft'" decoration-success="state == 'confirmed' " decoration-danger="state == 'cancelled'">
                 <header>
                 <button name="%(reservation.action_reservation_excel_wizard)d" 
                         type="action" 

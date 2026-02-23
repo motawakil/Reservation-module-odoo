@@ -8,7 +8,7 @@
 "category" : "Uncategorized",       
 "application" : True,
 "installable": True,
-
+"sequence": -100,
 
 
 "data": [
@@ -24,8 +24,9 @@
     "data/reservation_actions.xml" ,
     "views/reservation_menus.xml",
 
+],
 
-]
+"image" : "static/description/icon.png",
 
 }
 
